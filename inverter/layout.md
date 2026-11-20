@@ -27,9 +27,42 @@ You should see two windows:
 
 ![Magic layout window with sky130 menus and layer list]({{ '/assets/img/inverter/3-1-magic-open.png' | relative_url }})
 
+{: .fail }
+Files saved in the wrong folder? Magic saves into the folder it was **started from**. Check with `pwd` in tkcon; change it with `cd /foss/designs/inverter/mag`.
+
 {: .why }
-Title says `layout1` instead of `inverter`? Magic was started without a file name. No problem: name it when saving, by typing `save inverter` in the tkcon console.
+The window title can stay `layout1` even after `save inverter`. Check the saved file with `ls` in the terminal instead.
+
+## Step 3.2: Place the NMOS
+
+1. Layout window: **Devices 1 → nmos (MOSFET)**.
+2. In the parameter window set **Width `1`**, **Length `0.15`**, **Fingers `1`**. Leave the rest as it is.
+3. Click **Apply** / **OK**.
+
+What it does: Magic builds a complete sky130 NMOS for you (a **PCell** = parameterized cell): green n-diffusion, the poly gate across it, contacts on source and drain and on the gate, and a guard ring around it (the body connection).
+
+{: .fail }
+The width box starts at **0.42** (the smallest allowed). Change it before Apply, or the transistor will not match the schematic and LVS fails later.
+
+### Check DRC
+
+The **DRC** box at the top shows the number of rule errors. To see what they are, in tkcon:
+
+    select top cell
+    drc why
+
+![tkcon showing drc why: Metal1 minimum area (met1.6)]({{ '/assets/img/inverter/3-2-drc-why.png' | relative_url }})
+
+`Metal1 minimum area < 0.083um^2 (met1.6)`: each contact has a tiny metal1 square, smaller than sky130 allows. Normal for a transistor that is not wired yet: it disappears once the metal1 wires are drawn.
+
+### Save everything
+
+    writeall force
+
+What it does: saves every changed cell. `save inverter` saves only the top cell; the transistor lives in its own file (`sky130_fd_pr__nfet_01v8_XXXXXX.mag`) and would be missing next time.
+
+You should see: `ls` in `mag/` shows `inverter.mag` and a `sky130_fd_pr__nfet_01v8_….mag` file.
 
 ## Next
 
-Step 3.2 (place the transistors) comes after I do it.
+Step 3.3 (the PMOS) comes after I do it.
