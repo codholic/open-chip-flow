@@ -29,6 +29,60 @@ You should see: the box from Step 1.7, now showing `inverter` in the middle and 
 {: .why }
 `x1` is the instance name. SPICE uses names starting with `x` for subcircuits (blocks made of other parts). A second copy would be `x2`.
 
+## Step 2.3: Add sources, ground, load and labels
+
+`Shift+I` → **Home** → the line ending in `xschem_library/devices`. Place, then set each with `Q`:
+
+| Symbol | Set | Why |
+|---|---|---|
+| `vsource.sym` (V1) | `value=1.8` | **supply**: powers the inverter |
+| `vsource.sym` (V2) | `value="pulse(0 1.8 1n 100p 100p 5n 10n)"` | **input**: a square wave |
+| `gnd.sym` (one per ground point) | — | ground = SPICE node `0`, the 0 V reference |
+| `capa.sym` (C1) | `value=10f` | **load**: 10 fF, like the next gate the inverter drives |
+| `lab_pin.sym` ×3 | `lab=VDD`, `lab=in`, `lab=out` | names the wires, so the plot can find them |
+
+`pulse(0 1.8 1n 100p 100p 5n 10n)` = low 0 V, high 1.8 V, start after 1 ns, 100 ps rise, 100 ps fall, high for 5 ns, repeat every 10 ns.
+
+### Wiring (`W`)
+
+| From | To |
+|---|---|
+| V1 **+** | `VDD` label → x1 `VDD` |
+| V2 **+** | `in` label → x1 `in` |
+| x1 `out` | `out` label → C1 top |
+| V1 **−**, V2 **−**, C1 bottom, x1 `GND` | `gnd` |
+
+A `vsource` has **+** at the top (marked with a small `+`).
+
+{: .fail }
+x1 `GND` not wired to `gnd`? Then the inverter has no ground and the output floats.
+
+## Step 2.4: Add the simulation commands
+
+Place `code_shown.sym` (also in `devices`), select it, `Q`, and set (**with the quotes**):
+
+    value=".lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+    .control
+    tran 10p 40n
+    plot v(in) v(out)
+    .endc"
+
+| Line | What it does |
+|---|---|
+| `.lib … sky130.lib.spice tt` | loads the sky130 transistor models, typical (`tt`) corner |
+| `.control` … `.endc` | commands ngspice runs by itself |
+| `tran 10p 40n` | transient simulation: 40 ns of time in 10 ps steps |
+| `plot v(in) v(out)` | opens a window with the two voltages |
+
+`Ctrl+S` to save.
+
+You should see: the box shows all 5 lines.
+
+![Complete testbench: inverter x1, supply V1, pulse source V2, load C1, ground, labels and the code block]({{ '/assets/img/inverter/2-3-testbench-complete.png' | relative_url }})
+
+{: .fail }
+Box shows only `.lib`? The quotes are missing: without `"…"` Xschem keeps only the first word.
+
 ## Next
 
-Step 2.3 (sources, ground, load) comes after I do it.
+Step 2.5 (run the simulation) comes after I do it.
