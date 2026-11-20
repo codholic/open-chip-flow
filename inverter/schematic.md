@@ -38,9 +38,27 @@ Press `Shift+I` (or the **Insert** key) to open **Choose symbol**:
 {: .fail }
 `pmos.sym` / `nmos.sym` in `devices` are **generic** transistors with no sky130 model. Do not use them for this design. The sky130 ones are `pfet_01v8.sym` and `nfet_01v8.sym` under `sky130A/libs.tech/xschem` → `sky130_fd_pr` (Step 1.3).
 
+## Step 1.3: Place the sky130 transistors
+
+1. Press `Shift+I`. On the left, click the line ending in `sky130A/libs.tech/xschem`, then double-click `sky130_fd_pr` on the right.
+2. Search `pfet_01v8`, select **`pfet_01v8.sym`** (check the **File:** box at the bottom), click **OK**, click on the canvas to place it.
+3. Again `Shift+I`: place **`nfet_01v8.sym`** below it.
+4. Press `F` to fit the view, `Ctrl+S` to save.
+
+What it does: `pfet_01v8` / `nfet_01v8` are SkyWater's normal 1.8 V transistors (`fd_pr` = foundry primitives). Each starts at the default size `W=1 L=0.15` (shown as `1 x 1 / 0.15` = mult x W / L, in µm).
+
+You should see: each transistor has **4 red pin squares: G, D, S and B** (B = body).
+
+![Inverter schematic with pfet_01v8 and nfet_01v8 placed, pins added, gates and drains wired]({{ '/assets/img/inverter/1-3-transistors-placed.png' | relative_url }})
+
+*(This picture is a little ahead: pins and some wires from Steps 1.5 and 1.6 are already there. The B pins are not wired yet.)*
+
+{: .fail }
+Only **3** pin squares and the body written as text (`VDD` / `GND`)? You placed **`pfet3_01v8` / `nfet3_01v8`**, the 3-terminal versions whose body is fixed by a property. Delete it (`Del`) and place `pfet_01v8.sym` / `nfet_01v8.sym`. The `pfet_01v8` label alone does not tell you, because both versions use the same model name.
+
 ## Next
 
-Step 1.3 (place the sky130 transistors) comes after I do it.
+Step 1.4 (set the sizes) comes after I do it.
 
 {: .fail }
 Alert "`.../sky130_fd_pr/doc/pfet_01v8.svg` does not seem to be an xschem file": Search also finds the **picture** `pfet_01v8.svg` in the `doc/` folder. Click **No**, then pick `pfet_01v8.sym` (ends in `.sym`, not inside `doc/`).
