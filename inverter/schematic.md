@@ -56,9 +56,34 @@ You should see: each transistor has **4 red pin squares: G, D, S and B** (B = bo
 {: .fail }
 Only **3** pin squares and the body written as text (`VDD` / `GND`)? You placed **`pfet3_01v8` / `nfet3_01v8`**, the 3-terminal versions whose body is fixed by a property. Delete it (`Del`) and place `pfet_01v8.sym` / `nfet_01v8.sym`. The `pfet_01v8` label alone does not tell you, because both versions use the same model name.
 
+## Step 1.4: Set the transistor sizes
+
+1. Click the PMOS (M1), press `Q`.
+2. In **Edit Properties** change `W=1` to `W=2`. Leave `L=0.15`.
+3. Click **OK**, then `Ctrl+S`.
+4. The NMOS (M2) stays at `W=1 L=0.15`.
+
+| Transistor | W (µm) | L (µm) |
+|---|---|---|
+| PMOS M1 | 2 | 0.15 |
+| NMOS M2 | 1 | 0.15 |
+
+{: .why }
+`L=0.15` µm is the shortest length sky130 allows, so the transistors are as fast as possible. Holes (PMOS) move about 2–3× slower than electrons (NMOS), so the PMOS is made wider to give similar rise and fall times.
+
+![Edit Properties window of M1 with W=2]({{ '/assets/img/inverter/1-4-edit-properties.png' | relative_url }})
+
+The other lines (`ad`, `pd`, `as`, `ps`, `nrd`, `nrs`) are formulas for the drain/source area and perimeter. They update from `W` by themselves: leave them alone.
+`Path` at the top shows which symbol file this is: it must end in `sky130_fd_pr/pfet_01v8.sym`.
+
+You should see: the PMOS label changes to `1 x 2 / 0.15`.
+
+{: .fail }
+Value did not change? The new value is only kept after **OK**, and only saved to the file after `Ctrl+S` (a `*` in the title means unsaved).
+
 ## Next
 
-Step 1.4 (set the sizes) comes after I do it.
+Step 1.5 (pins) and 1.6 (wires) come after I do them.
 
 {: .fail }
 Alert "`.../sky130_fd_pr/doc/pfet_01v8.svg` does not seem to be an xschem file": Search also finds the **picture** `pfet_01v8.svg` in the `doc/` folder. Click **No**, then pick `pfet_01v8.sym` (ends in `.sym`, not inside `doc/`).
