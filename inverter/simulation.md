@@ -83,6 +83,30 @@ You should see: the box shows all 5 lines.
 {: .fail }
 Box shows only `.lib`? The quotes are missing: without `"…"` Xschem keeps only the first word.
 
+## Step 2.5: Make the netlist
+
+Click **Netlist** (top bar).
+
+What it does: writes the schematic as a SPICE text file, `tb_inverter.spice`, in `~/.xschem/simulations/` inside the tools. This text is what ngspice reads.
+You should see: a window with the netlist (if your Xschem is set to show it). **Dismiss** closes it.
+
+![Netlist window of tb_inverter.spice]({{ '/assets/img/inverter/2-5-netlist.png' | relative_url }})
+
+How to read it:
+
+| Line | Meaning |
+|---|---|
+| `x1 VDD in out 0 inverter` | the inverter instance, pins in symbol order; ground is node `0` |
+| `V1 VDD 0 1.8` | supply: 1.8 V from VDD to ground |
+| `V2 in 0 pulse(...)` | input square wave |
+| `C1 out 0 10f` | load capacitor |
+| `.subckt inverter VDD in out GND` … `.ends` | what is inside the inverter |
+| `XM1 out in VDD VDD … pfet_01v8 L=0.15 W=2` | PMOS, pins **D G S B** = out, in, VDD, VDD |
+| `XM2 out in GND GND … nfet_01v8 L=0.15 W=1` | NMOS, pins **D G S B** = out, in, GND, GND |
+
+{: .why }
+Check the netlist before simulating: every wrong wire shows up here as a wrong net name. For example, a floating body would appear as `net1` instead of `VDD`/`GND`.
+
 ## Next
 
-Step 2.5 (run the simulation) comes after I do it.
+Step 2.6 (run the simulation, see the waveforms) comes after I do it.
