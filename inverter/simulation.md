@@ -158,6 +158,37 @@ You should see: `binary raw file "tb_inverter.raw"` in the terminal, and an empt
 
 ![ngspice terminal showing binary raw file tb_inverter.raw; launcher and empty graph in the schematic]({{ '/assets/img/inverter/2-7-raw-written.png' | relative_url }})
 
+{: .fail }
+Ran into the **Global schematic property** ("Text input") window? That is the testbench's own settings, opened by double-clicking empty background. **Cancel** it. Never use its **Load** button to open the `.raw` file: that pastes the binary file into your schematic. If you already pressed OK, do **not** save: **File → Reload** (`Alt+S`) restores the file from disk.
+
+## Step 2.8: Choose the signals and load the waves
+
+1. Click once on the graph's **border** (thin frame) to select it, then press `Q`.
+   You should see: a property window starting with `flags=graph`.
+2. Change three lines:
+
+       x2=40e-9
+       node="in
+       out"
+       color="4 6"
+
+   | Line | What it does |
+   |---|---|
+   | `x2=40e-9` | x-axis ends at 40 ns (the length of `tran 10p 40n`) instead of 10 µs |
+   | `node="in` / `out"` | the signals to draw, one per line: both in this graph (**merged**) |
+   | `color="4 6"` | one color number per signal, same order |
+
+3. **OK**, then **Ctrl+click** the green **load waves** arrow, then `Ctrl+S`.
+
+You should see: `in` and `out` in one graph, each switching between 0 and 1.8 V, always opposite.
+
+![Built-in Xschem graph with in and out merged, 0 to 40 ns]({{ '/assets/img/inverter/2-8-graph-merged.png' | relative_url }})
+
+Mouse in the graph: left-drag pans, right-drag in X zooms, `F` zooms to fit all data.
+
+{: .fail }
+Double-click inside the graph opens nothing, or the wrong window? The graph settings dialog only opens on a double-click in the middle of the graph **after the waves are loaded**. Selecting the border and pressing `Q` (above) always works.
+
 ## Next
 
-Step 2.8 (load the waves, choose signals: separate or merged) comes after I do it.
+Step 2.9 (separate graphs for `in` and `out`) comes after I do it.
