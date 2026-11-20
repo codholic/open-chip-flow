@@ -42,6 +42,9 @@ Press `Shift+I` (or the **Insert** key) to open **Choose symbol**:
 
 1. Press `Shift+I`. On the left, click the line ending in `sky130A/libs.tech/xschem`, then double-click `sky130_fd_pr` on the right.
 2. Search `pfet_01v8`, select **`pfet_01v8.sym`** (check the **File:** box at the bottom), click **OK**, click on the canvas to place it.
+
+   ![Choose symbol in sky130_fd_pr with pfet_01v8.sym selected]({{ '/assets/img/inverter/1-3-choose-pfet.png' | relative_url }})
+
 3. Again `Shift+I`: place **`nfet_01v8.sym`** below it.
 4. Press `F` to fit the view, `Ctrl+S` to save.
 
@@ -52,9 +55,6 @@ You should see: each transistor has **4 red pin squares: G, D, S and B** (B = bo
 ![Inverter schematic with pfet_01v8 and nfet_01v8 placed, pins added, gates and drains wired]({{ '/assets/img/inverter/1-3-transistors-placed.png' | relative_url }})
 
 *(This picture is a little ahead: pins and some wires from Steps 1.5 and 1.6 are already there. The B pins are not wired yet.)*
-
-{: .fail }
-Only **3** pin squares and the body written as text (`VDD` / `GND`)? You placed **`pfet3_01v8` / `nfet3_01v8`**, the 3-terminal versions whose body is fixed by a property. Delete it (`Del`) and place `pfet_01v8.sym` / `nfet_01v8.sym`. The `pfet_01v8` label alone does not tell you, because both versions use the same model name.
 
 ## Step 1.4: Set the transistor sizes
 
