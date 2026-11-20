@@ -1,0 +1,26 @@
+# Site settings. GitHub Pages reads this file and builds the site.
+title: Open Chip Flow
+description: Step-by-step notes for analog chip design with free, open-source tools (sky130).
+url: "https://codholic.github.io"
+baseurl: "/open-chip-flow"        # site lives at codholic.github.io/open-chip-flow
+
+remote_theme: just-the-docs/just-the-docs@v0.12.0   # same theme as SkillSurf
+plugins:
+  - jekyll-remote-theme
+
+search_enabled: true
+heading_anchors: true
+aux_links:
+  "GitHub": "https://github.com/codholic/open-chip-flow"
+footer_content: "Notes by Md Redwan Islam, written while learning. Text CC BY 4.0."
+
+callouts:
+  untested:
+    title: Not tested yet
+    color: yellow
+  why:
+    title: Why
+    color: blue
+  fail:
+    title: If it fails
+    color: red
