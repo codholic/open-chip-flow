@@ -11,6 +11,7 @@ plugins:
 search_enabled: true
 heading_anchors: true
 aux_links:
+  "← codholic.github.io": "https://codholic.github.io/"
   "GitHub": "https://github.com/codholic/open-chip-flow"
 footer_content: "Notes by Md Redwan Islam, written while learning. Text CC BY 4.0."
 
