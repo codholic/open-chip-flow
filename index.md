@@ -3,7 +3,7 @@ title: Home
 nav_order: 1
 ---
 
-# Open Chip Flow
+# Chip Design with Open Source Resources
 
 My notes for designing a chip with **free, open-source tools**, written step by step as I do it.
 No Claude, no ChatGPT needed to follow along: just copy each command.

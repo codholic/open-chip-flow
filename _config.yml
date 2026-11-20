@@ -1,5 +1,5 @@
 # Site settings. GitHub Pages reads this file and builds the site.
-title: Open Chip Flow
+title: Chip Design with Open Source Resources
 description: Step-by-step notes for analog chip design with free, open-source tools (sky130).
 url: "https://codholic.github.io"
 baseurl: "/open-chip-flow"        # site lives at codholic.github.io/open-chip-flow

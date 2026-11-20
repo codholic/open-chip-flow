@@ -78,6 +78,8 @@ In a terminal **inside the browser desktop**:
 
 You should see: `sky130A`, then the Xschem window opens.
 
+![Terminal inside the tools desktop: echo $PDK prints sky130A]({{ '/assets/img/setup/step7-pdk-check.png' | relative_url }})
+
 ## Every day after that
 
 **Start**, in the Mac Terminal:
