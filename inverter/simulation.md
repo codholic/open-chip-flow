@@ -189,6 +189,31 @@ Mouse in the graph: left-drag pans, right-drag in X zooms, `F` zooms to fit all 
 {: .fail }
 Double-click inside the graph opens nothing, or the wrong window? The graph settings dialog only opens on a double-click in the middle of the graph **after the waves are loaded**. Selecting the border and pressing `Q` (above) always works.
 
+## Step 2.9 (optional): Stacked lanes (digital mode)
+
+Each signal in its own lane, in one graph, like a logic analyzer. Select the graph border, `Q`, set:
+
+    digital=1
+    ypos1=0
+    ypos2=1
+    node="in
+    \"-; 0.9 \"
+    out"
+    color="4 9 6"
+
+| Line | What it does |
+|---|---|
+| `digital=1` | lanes instead of overlaid traces |
+| `ypos1` / `ypos2` | how much of the lane stack is visible: raise `ypos2` if the top lane is cut off, lower it if lanes are tiny |
+| `\"-; 0.9 \"` | a white divider line (color 9) between the signals |
+| one `color` per `node` line | in the same order |
+
+{: .why }
+Digital mode shows **no voltage values**, only lane names and high/low. For voltages keep `digital=0` (Step 2.8), or put each signal in its own graph (add a second graph, `node="in"` in one and `node="out"` in the other).
+
+{: .fail }
+A signal is missing? Each signal (and the divider) must be on **its own line** inside `node="…"`, and there must be as many colors as lines.
+
 ## Next
 
-Step 2.9 (separate graphs for `in` and `out`) comes after I do it.
+[3. Layout](layout.html): draw the inverter's transistors and wires in Magic.
