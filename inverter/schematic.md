@@ -28,15 +28,10 @@ The file is only written to disk when you save (`Ctrl+S`).
 
 ### The symbol window
 
-Press `Shift+I` (or the **Insert** key) to open **Choose symbol**:
-
-![Xschem with the Choose symbol window open]({{ '/assets/img/inverter/1-2-xschem-choose-symbol.png' | relative_url }})
+Press `Shift+I` (or the **Insert** key) to open **Choose symbol**.
 
 - **Left:** the library folders. `.../xschem_library/devices` = generic parts (pins, sources, ground, labels). `.../sky130A/libs.tech/xschem` = the sky130 transistors.
 - **Right:** the symbols in the chosen folder. **Search** filters them by name.
-
-{: .fail }
-`pmos.sym` / `nmos.sym` in `devices` are **generic** transistors with no sky130 model. Do not use them for this design. The sky130 ones are `pfet_01v8.sym` and `nfet_01v8.sym` under `sky130A/libs.tech/xschem` → `sky130_fd_pr` (Step 1.3).
 
 ## Step 1.3: Place the sky130 transistors
 
