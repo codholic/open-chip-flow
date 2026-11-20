@@ -126,8 +126,6 @@ You should see: `ls` in the terminal shows `inverter.sch` and `inverter.sym`.
 
 [2. Simulation](simulation.html): a testbench that powers the inverter and plots in/out.
 
-{: .fail }
-Alert "`.../sky130_fd_pr/doc/pfet_01v8.svg` does not seem to be an xschem file": Search also finds the **picture** `pfet_01v8.svg` in the `doc/` folder. Click **No**, then pick `pfet_01v8.sym` (ends in `.sym`, not inside `doc/`).
 
 ## Xschem keys used on this page
 
