@@ -122,6 +122,42 @@ You should see: `v(in)` (red) is a square wave and `v(out)` (blue) is the same w
 {: .why }
 The small spikes on `out` at each edge are normal: the input couples to the output through the transistors' gate-drain capacitance before the inverter switches.
 
+## Step 2.7: Graphs inside the schematic (oscilloscope view)
+
+Instead of ngspice's plot window, Xschem can draw the waveforms **inside the schematic**, in graph boxes like oscilloscope screens. It needs three pieces:
+
+| Piece | What it does |
+|---|---|
+| `write tb_inverter.raw` in the code block | ngspice saves all results to a `.raw` file |
+| `launcher.sym` ("load waves") | Ctrl+click loads that file into the graphs |
+| waveform graph(s) | each box is one "screen" showing one or more signals |
+
+**1. Save the results.** Select the code block, `Q`, and use `write` instead of `plot`:
+
+    value=".lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+    .control
+    tran 10p 40n
+    write tb_inverter.raw
+    .endc"
+
+(A `#` in front of a line, like `#plot v(in) v(out)`, turns it off.)
+
+**2. Add the "load waves" button.** `Shift+I` → `devices` → `launcher.sym`. Place it, `Q`, set:
+
+    name=h1
+    descr="load waves"
+    tclcommand="xschem raw_read $netlist_dir/tb_inverter.raw tran"
+
+What it does: `descr` is the text next to the arrow. `tclcommand` runs on Ctrl+click: it reads the transient (`tran`) results from `tb_inverter.raw` in the simulation folder (`$netlist_dir`, where ngspice runs).
+
+**3. Add a graph.** Menu **Simulation → Graphs → Add waveform graph**, click to place. Add a second one if you want separate screens.
+
+**4. Run.** `Ctrl+S` → **Netlist** → **Simulate**. When ngspice is done, type `quit` in its terminal.
+
+You should see: `binary raw file "tb_inverter.raw"` in the terminal, and an empty graph box in the schematic.
+
+![ngspice terminal showing binary raw file tb_inverter.raw; launcher and empty graph in the schematic]({{ '/assets/img/inverter/2-7-raw-written.png' | relative_url }})
+
 ## Next
 
-Step 2.7 (waveform viewer with separate/merged plots) comes after I do it.
+Step 2.8 (load the waves, choose signals: separate or merged) comes after I do it.
