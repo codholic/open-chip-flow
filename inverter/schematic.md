@@ -42,6 +42,9 @@ Press `Shift+I` (or the **Insert** key) to open **Choose symbol**:
 
 Step 1.3 (place the sky130 transistors) comes after I do it.
 
+{: .fail }
+Alert "`.../sky130_fd_pr/doc/pfet_01v8.svg` does not seem to be an xschem file": Search also finds the **picture** `pfet_01v8.svg` in the `doc/` folder. Click **No**, then pick `pfet_01v8.sym` (ends in `.sym`, not inside `doc/`).
+
 ## Xschem keys used on this page
 
 | Key | Does |

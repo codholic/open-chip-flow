@@ -13,3 +13,4 @@ Errors I hit and how I fixed them.
 | "No such file" / Magic "Cannot open output file" after deleting files in Finder | Docker file-sharing cache on Mac | Change files inside the tools desktop, or stop + start the tools |
 | Magic hangs at extraction on older (TT06-era) designs | Magic 8.3.685 hangs on `ext2spice -d` | Remove `-d` from `ext2spice -d -o` in the extract script |
 | `make` still busy after Ctrl+C on a Magic job | Magic keeps running in the background | Close that terminal, check with `ps` that magic is gone |
+| Xschem alert: `.../sky130_fd_pr/doc/pfet_01v8.svg does not seem to be an xschem file` | Symbol search also lists the documentation picture (`.svg` in `doc/`) | Click **No**; pick `pfet_01v8.sym` (ends in `.sym`, not in `doc/`) |
