@@ -39,6 +39,9 @@ You should see: a folder `~/eda/iic-osic-tools`.
 What it does: downloads the tools image the first time (big, ~17 GB on disk, takes a while), then starts it.
 Your design files live in `~/eda/designs` on the Mac = `/foss/designs` inside the tools.
 
+{: .why }
+Want your design files in another folder? Start it once with `DESIGNS=~/your/folder ./start_vnc.sh`. The tools remember that folder. If the tools were already set up before, the script just restarts the old ones (with their old folder).
+
 {: .fail }
 "Cannot connect to the Docker daemon" means Docker Desktop is not running. Do Step 2's `open -a Docker` and wait for the whale.
 
