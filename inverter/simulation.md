@@ -107,6 +107,21 @@ How to read it:
 {: .why }
 Check the netlist before simulating: every wrong wire shows up here as a wrong net name. For example, a floating body would appear as `net1` instead of `VDD`/`GND`.
 
+## Step 2.6: Run the simulation
+
+Click **Simulate** (top bar).
+
+What it does: opens a terminal and runs `ngspice` on the netlist. ngspice runs the commands between `.control` and `.endc`, so `plot` opens a waveform window.
+You should see: `v(in)` (red) is a square wave and `v(out)` (blue) is the same wave **upside down**, both between 0 and 1.8 V.
+
+![ngspice terminal and plot window: v(out) is the inverse of v(in)]({{ '/assets/img/inverter/2-6-simulation-plot.png' | relative_url }})
+
+- **Plot window:** click a point to read its time and voltage (printed in the terminal as `x0 = …, y0 = …`). **Quit** closes it.
+- **Terminal:** `Initial Transient Solution` lists the voltages at t = 0: `in` = 0, so `out` = 1.8 V (correct for an inverter). The prompt `ngspice 1 ->` waits for more commands; type `quit` to close.
+
+{: .why }
+The small spikes on `out` at each edge are normal: the input couples to the output through the transistors' gate-drain capacitance before the inverter switches.
+
 ## Next
 
-Step 2.6 (run the simulation, see the waveforms) comes after I do it.
+Step 2.7 (waveform viewer with separate/merged plots) comes after I do it.
