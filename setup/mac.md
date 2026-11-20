@@ -8,6 +8,9 @@ nav_order: 1
 
 Tested on an Apple-silicon MacBook (2026-10-29).
 
+{: .why }
+**Already set up the tools before (e.g. for a course)?** Skip Steps 1–3. Your folders just have other names: wherever these notes say `~/eda/iic-osic-tools`, use the folder where you cloned the scripts, and for `~/eda/designs` use your own design folder. Then go to [Every day after that](#every-day-after-that).
+
 ## Step 1: Install Homebrew (skip if you have it)
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -77,12 +80,49 @@ You should see: `sky130A`, then the Xschem window opens.
 
 ## Every day after that
 
-| To | Run in the Mac Terminal |
-|---|---|
-| Start | `open -a Docker`, wait for the whale, then `docker start iic-osic-tools_xvnc_uid_$(id -u)` and open the link from Step 5 |
-| Stop | `docker stop iic-osic-tools_xvnc_uid_$(id -u)` |
+**Start**, in the Mac Terminal:
 
-Your files in `~/eda/designs` stay when you stop.
+    open -a Docker
+    cd ~/eda/iic-osic-tools
+    ./start_vnc.sh
+    open "http://localhost/?password=abc123"
+
+What it does: starts Docker Desktop (wait for the whale to stop moving), then restarts your existing tools, then opens the tools desktop in the browser.
+
+**Stop**:
+
+    docker stop iic-osic-tools_xvnc_uid_$(id -u)
+
+What it does: stops the tools container. `$(id -u)` fills in your user number (e.g. 501), which is part of the container's name.
+Your files in `~/eda/designs` stay when you stop. To also quit Docker: whale icon → Quit Docker Desktop.
+
+## Optional: make a one-word shortcut
+
+Typing four lines every day gets old. Put them in a **shell function** in `~/.zshrc`, the file Terminal reads every time it opens a tab:
+
+    open -e ~/.zshrc
+
+What it does: opens that file in TextEdit (`-e`). It is hidden in Finder because the name starts with a dot.
+
+Add these lines at the end and save:
+
+    # Open-source chip tools (IIC-OSIC-TOOLS)
+    chip-start() {
+      open -a Docker
+      until docker info >/dev/null 2>&1; do sleep 2; done   # wait until Docker is ready
+      (cd ~/eda/iic-osic-tools && ./start_vnc.sh) || return 1
+      sleep 3 && open "http://localhost/?password=abc123"
+    }
+    chip-stop() {
+      docker stop iic-osic-tools_xvnc_uid_$(id -u)
+    }
+
+Then load it once:
+
+    source ~/.zshrc
+
+What it does: reads the file again, so the new commands work in this tab (new tabs read it by themselves).
+You should see: `chip-start` starts everything, `chip-stop` stops it. `type chip-start` prints what the shortcut runs.
 
 {: .fail }
 While the tools are running, create, rename and delete design files **inside the browser desktop**, not in Finder. Otherwise the tools can keep seeing old copies (Docker file-sharing cache). Fix: stop and start again.
