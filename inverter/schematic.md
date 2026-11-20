@@ -81,9 +81,55 @@ You should see: the PMOS label changes to `1 x 2 / 0.15`.
 {: .fail }
 Value did not change? The new value is only kept after **OK**, and only saved to the file after `Ctrl+S` (a `*` in the title means unsaved).
 
+## Step 1.5: Add the pins
+
+Pins are how the inverter connects to the outside world (the testbench, or a bigger circuit).
+
+1. `Shift+I` → **Home** → the line ending in `xschem_library/devices` (pins are **not** inside `sky130_fd_pr`).
+2. Place and name them (select, `Q`, set `lab=`):
+
+| Symbol | `lab=` | Meaning |
+|---|---|---|
+| `ipin.sym` | `in` | input |
+| `opin.sym` | `out` | output |
+| `iopin.sym` | `VDD` | supply |
+| `iopin.sym` | `GND` | ground |
+
+{: .why }
+Do **not** use `vdd.sym` / `gnd.sym` here. Those are global supply/ground for the testbench (Step 2). Inside a building block, power comes in through pins.
+
+## Step 1.6: Wire it
+
+Press `W`, click a start point, click the end point (`Shift+W` snaps to the nearest pin). `Esc` stops.
+
+| From | To |
+|---|---|
+| both gates (G) | `in` |
+| both drains (D) | `out` |
+| PMOS source (S) **and body (B)** | `VDD` |
+| NMOS source (S) **and body (B)** | `GND` |
+
+A blue dot means wires are joined. Then `Ctrl+S`.
+
+{: .fail }
+Forgot the **B** wires? The body then floats: wrong threshold voltage in simulation and an LVS error later.
+
+## Step 1.7: Make the symbol
+
+In `inverter.sch` press `A` (Make symbol from pin list), accept, then `Ctrl+S`.
+
+What it does: writes `inverter.sym` next to `inverter.sch`: a box with your 4 pins, so the inverter can be dropped into other schematics (like the testbench in Step 2).
+To open it: File → Open → `inverter.sym`.
+
+![The generated inverter symbol: a box with pins in, VDD, out, GND]({{ '/assets/img/inverter/1-7-inverter-symbol.png' | relative_url }})
+
+`@symname` and `@name` are placeholders: in a schematic they show the symbol name (`inverter`) and the instance name (e.g. `x1`).
+
+You should see: `ls` in the terminal shows `inverter.sch` and `inverter.sym`.
+
 ## Next
 
-Step 1.5 (pins) and 1.6 (wires) come after I do them.
+[2. Simulation](simulation.html): a testbench that powers the inverter and plots in/out.
 
 {: .fail }
 Alert "`.../sky130_fd_pr/doc/pfet_01v8.svg` does not seem to be an xschem file": Search also finds the **picture** `pfet_01v8.svg` in the `doc/` folder. Click **No**, then pick `pfet_01v8.sym` (ends in `.sym`, not inside `doc/`).
