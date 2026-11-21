@@ -44,6 +44,15 @@ What it does: Magic builds a complete sky130 NMOS for you (a **PCell** = paramet
 {: .fail }
 The width box starts at **0.42** (the smallest allowed). Change it before Apply, or the transistor will not match the schematic and LVS fails later.
 
+You should see: the status bar says `Loaded: inverter  Editing: inverter`, and the transistor shows its instance name (`sky130_fd_pr__nfet_01v8_XXXXXX_0`).
+
+![NMOS W=1 L=0.15 placed in the inverter cell, with guard ring and gate contacts top and bottom]({{ '/assets/img/inverter/3-2-nmos-placed.png' | relative_url }})
+
+To change a placed transistor: mouse over it, `s` (select), `q` (parameter window), edit, **Apply**.
+
+{: .fail }
+`q` says **No gencell device is selected** and `s` says **Topmost cell in the window**? The window shows the transistor's own cell instead of `inverter`. In tkcon: `load inverter`. If Magic asks what to do with the transistor cell, click **flush** (throw away its unsaved changes), then place the transistor again.
+
 ### Check DRC
 
 The **DRC** box at the top shows the number of rule errors. To see what they are, in tkcon:
