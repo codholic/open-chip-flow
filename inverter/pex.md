@@ -125,6 +125,81 @@ Other ways to zoom: right-drag left↔right inside the plot (on a Mac trackpad: 
 {: .why }
 Xschem graphs have no dotted/dashed line style: waves differ by color only. To see the gap as its own trace, add `"delta; out_pex out -"` to `node` (one more color in `color`): `out_pex` minus `out`.
 
+## Step 6.4: How big is the gap, and why?
+
+{: .why }
+**Analysis by Claude (AI assistant):** Claude read the four delays from my ngspice terminal, added up the parasitic capacitors in `inverter_pex.spice`, and ran extra ngspice sweeps (load and transistor size) to check the explanation.
+
+![Zoomed falling edge and the four meas results in the ngspice terminal]({{ '/assets/img/inverter/6-4-delays-terminal.png' | relative_url }})
+
+### 1. The gap, from the ngspice terminal
+
+    tphl_sch = 4.88492e-11   tphl_pex = 5.19442e-11
+    tplh_sch = 5.76643e-11   tplh_pex = 6.14968e-11
+
+| | Schematic | Layout | Gap | Gap in % |
+|---|---|---|---|---|
+| tpHL | 48.85 ps | 51.94 ps | 51.94 − 48.85 = **3.10 ps** | 3.10 / 48.85 = **6.3 %** |
+| tpLH | 57.66 ps | 61.50 ps | 61.50 − 57.66 = **3.83 ps** | 3.83 / 57.66 = **6.6 %** |
+| average tp = (tpHL + tpLH) / 2 | 53.3 ps | 56.7 ps | 3.5 ps | 6.5 % |
+
+### 2. How much capacitance is that?
+
+Delay grows almost linearly with the load capacitance. Measured with the schematic inverter (10 → 11 → 12 fF load):
+
+| Load | tpHL | tpLH |
+|---|---|---|
+| 10 fF | 49.0 ps | 57.7 ps |
+| 11 fF | 51.0 ps | 60.2 ps |
+| 12 fF | 52.9 ps | 62.7 ps |
+| **slope** | **≈ 1.95 ps per fF** | **≈ 2.5 ps per fF** |
+
+So the layout behaves like **extra load** of
+
+- falling: 3.10 ps ÷ 1.95 ps/fF ≈ **1.6 fF**
+- rising: 3.83 ps ÷ 2.5 ps/fF ≈ **1.5 fF**
+
+### 3. Where that capacitance is (from `inverter_pex.spice`)
+
+Adding up every `C` line that touches `out` (top cell plus both transistor cells):
+
+| `out` to | Capacitors | Sum |
+|---|---|---|
+| GND | 0.260 + 0.087 + 0.250 + 0.108 | 0.71 fF |
+| VDD | 0.086 + 0.121 + 0.173 | 0.38 fF |
+| `in` | 0.127 + 0.027 + 0.040 = 0.19 fF, counted **×2** (Miller effect: `in` and `out` swing in opposite directions) | ≈ 0.39 fF |
+| **total** | | **≈ 1.5 fF** |
+
+Same answer as step 2: about **1.5 fF of layout parasitics** on top of the 10 fF load. That is why the layout is ~6.5 % slower.
+
+### 4. Would smaller transistors help? No.
+
+A smaller transistor has less junction capacitance, but it also gives **less current**. Delay ≈ C / I, so both shrink together:
+
+| Wn / Wp | Load 10 fF: tpHL / tpLH | Load ≈ 0: tpHL / tpLH |
+|---|---|---|
+| 0.5 / 1 | 68.3 / 82.8 ps (**slower**) | 19.0 / 23.3 ps |
+| 1 / 2 (this design) | 49.0 / 57.7 ps | 19.3 / 23.7 ps |
+| 2 / 4 | 35.7 / 44.2 ps (faster) | 17.5 / 23.4 ps |
+
+- With a **real load** (10 fF), the load dominates: halving the transistors makes it ~40 % **slower**; doubling makes it ~27 % faster (but then the inverter loads the stage before it more).
+- With **no load**, the delay is the same for every size: the transistor drives mostly its own capacitance, which scales with it.
+
+### 5. How to reduce the layout parasitics
+
+The ~1.5 fF comes from the **layout**, so the fixes are in the layout:
+
+| Fix | Which capacitance it cuts |
+|---|---|
+| Put the PMOS and NMOS closer (gap here: 1.44 µm) | shorter `in` and `out` wires: less wire to GND/VDD |
+| Make the `out` wire short and not wider than needed, and not run over the guard rings | `out`–GND (0.26 fF in the top cell) |
+| Keep the `in` and `out` wires apart, not running side by side | `in`–`out` coupling, which counts double (Miller) |
+| Remove the unused gate contacts (`topc` / `botc` = 0) | extra poly/metal on `in` |
+| Use 2 fingers (`nf=2`) with the drain in the middle | the two halves share one drain: about half the drain junction area on `out` |
+| Long wires on higher metal (metal2/3) | farther from the substrate: less capacitance per µm |
+
+For this tiny inverter, 1.5 fF next to a 10 fF load is small. In a real block (like a SAR ADC comparator, where the load is small and the wires are long), the layout parasitics can dominate, so these habits matter.
+
 ## Done
 
 The inverter has gone through the whole flow: schematic → simulation → layout → DRC → LVS → post-layout simulation.
