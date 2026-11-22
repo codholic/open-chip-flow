@@ -163,6 +163,10 @@ with DRC (`drc check`, `drc why`), extraction (`extract all`, `ext2spice lvs`, `
 {: .fail }
 Drawing wires by hand: a metal1 band across **both** source/drain contact columns **shorts** the transistor (source = drain). DRC does not see this; LVS does.
 
+## Further reading
+
+- [An Introduction to the MAGIC VLSI Design Layout System](https://terpconnect.umd.edu/~newcomb/vlsi/magic_tut/Magic_x3.pdf) (J. Wilinski, UMD, 19 pages). Part I explains the box, painting, labels, wiring, DRC and extraction; Part II is a step-by-step CMOS inverter layout. From 2003, with a generic lambda-based technology instead of sky130: the way Magic works is the same, but layer names and rule values differ.
+
 ## Next
 
 [4. DRC](drc.html) and [5. LVS](lvs.html).
