@@ -24,3 +24,5 @@ Errors I hit and how I fixed them.
 | Magic: box corner will not land on an edge | Box snaps to a grid | `snap internal` in tkcon, or type exact `box` coordinates |
 | Magic: files saved in the wrong folder | Magic saves where it was started | `pwd` / `cd` in tkcon |
 | Cannot copy text into the tools desktop | Mac clipboard is not shared automatically | noVNC tab on the left edge → **Clipboard**; or put commands in a `.tcl` file and `source` it |
+| netgen: `wrong # args: should be "lvs name1 name2 …"` | No space between the two quoted netlist arguments | `"inverter.spice inverter" "../lvs/inverter.spice inverter"` ([LVS](inverter/lvs.html)) |
+| netgen: `Setup file setup.tcl does not exist` | sky130 setup file argument missing | Add `$PDK_ROOT/$PDK/libs.tech/netgen/sky130A_setup.tcl lvs.out`, or run `./run_lvs.sh` |
