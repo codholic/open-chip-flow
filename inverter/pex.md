@@ -56,6 +56,75 @@ The top cell in `inverter_pex.spice`:
 
 Each `C` line is a parasitic capacitor between two nets, in fF (for example `out` to `GND`). The transistor cells above it have their own junction capacitances. (A tiny negative value like `VDD GND -0.04f` comes from Magic's coupling correction and is harmless.)
 
-## Next
+## Step 6.2: Simulate schematic and layout side by side
 
-Step 6.2 (simulate schematic and layout side by side) comes after I do it.
+Testbench: `xschem/tb_inverter_pex.sch` (made by Claude from `tb_inverter.sch`):
+
+| Instance | What it is | Output |
+|---|---|---|
+| `x1` | the **schematic** inverter (`inverter.sch`) | `out` |
+| `x2` | the **extracted layout** with parasitics (`inverter_pex.spice`) | `out_pex` |
+
+Both get the same input `in`, the same 1.8 V supply and the same 10 fF load.
+
+`x2` is the same `inverter.sym`, with two extra properties (`Q` on it):
+
+    schematic=inverter_parax
+    spice_sym_def="tcleval(.include /foss/designs/inverter/mag/inverter_pex.spice)"
+
+| Property | What it does |
+|---|---|
+| `schematic=inverter_parax` | this instance becomes subcircuit `inverter_parax` in the netlist, not `inverter` |
+| `spice_sym_def=…` | instead of netlisting the schematic, Xschem includes the extracted file, which defines `inverter_parax` |
+
+{: .fail }
+With only `spice_sym_def` (no `schematic=`), Xschem quietly kept using the schematic. With `schematic=` but the extracted subcircuit still called `inverter`: `unknown subckt … inverter_parax`. That is why `extract_pex.tcl` renames it.
+
+The code block measures the delay of both outputs (50 % = 0.9 V crossing of `in` to 0.9 V crossing of the output):
+
+    meas tran tphl_sch trig v(in) val=0.9 rise=1 targ v(out) val=0.9 fall=1
+    meas tran tplh_sch trig v(in) val=0.9 fall=1 targ v(out) val=0.9 rise=1
+    meas tran tphl_pex trig v(in) val=0.9 rise=1 targ v(out_pex) val=0.9 fall=1
+    meas tran tplh_pex trig v(in) val=0.9 fall=1 targ v(out_pex) val=0.9 rise=1
+    write tb_inverter_pex.raw
+
+| `meas` part | Meaning |
+|---|---|
+| `tphl` / `tplh` | delay when the output goes high→low / low→high |
+| `trig v(in) val=0.9 rise=1` | start the clock when `in` crosses 0.9 V going up, the 1st time |
+| `targ v(out) val=0.9 fall=1` | stop it when `out` crosses 0.9 V going down, the 1st time |
+
+Run: **Netlist** → **Simulate**. Then `quit` in the ngspice terminal, and **Ctrl+click** "load waves".
+
+![Testbench with x1 (inverter) and x2 (inverter_parax), graph of in/out/out_pex, and the four delays in the ngspice terminal]({{ '/assets/img/inverter/6-2-sim-side-by-side.png' | relative_url }})
+
+## Result
+
+| Delay | Schematic (`out`) | Layout + parasitics (`out_pex`) | Difference |
+|---|---|---|---|
+| tpHL (output falls) | 48.8 ps | 51.9 ps | +3.1 ps (+6 %) |
+| tpLH (output rises) | 57.7 ps | 61.5 ps | +3.8 ps (+7 %) |
+
+The layout adds a few femtofarads on `out` (wire and junction capacitance), so the inverter charges more capacitance and is about **6–7 % slower**. Rising is slower than falling in both cases: the PMOS is 2× wider, but holes are still slower than that.
+
+## Step 6.3: Zoom in on one edge
+
+At 0–40 ns the 3 ps gap is invisible. Zoom on the first falling edge: select the graph **border**, `Q`, set
+
+    x1=1.0e-9
+    x2=1.25e-9
+
+**OK**.
+
+![Zoom 1.0 to 1.25 ns: in rising, out and out_pex falling, out_pex slightly later]({{ '/assets/img/inverter/6-2-zoom-falling-edge.png' | relative_url }})
+
+You should see: `in` rising, `out` and `out_pex` falling, `out_pex` slightly to the right (later). The small bump above 1.8 V at the start is the input coupling to the output through the gate-drain capacitance.
+
+Other ways to zoom: right-drag left↔right inside the plot (on a Mac trackpad: two-finger click and drag), `f` for the full view. Rising edge: `x1=6.0e-9 x2=6.3e-9`.
+
+{: .why }
+Xschem graphs have no dotted/dashed line style: waves differ by color only. To see the gap as its own trace, add `"delta; out_pex out -"` to `node` (one more color in `color`): `out_pex` minus `out`.
+
+## Done
+
+The inverter has gone through the whole flow: schematic → simulation → layout → DRC → LVS → post-layout simulation.
