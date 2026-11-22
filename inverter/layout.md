@@ -107,7 +107,11 @@ Compare the two **left** numbers. Move the PMOS by the difference (here 0.64 µm
 
 ## Step 3.4: Wire it with a script
 
-Instead of drawing wires with the mouse, I wrote all the boxes into a small script and ran it in one go:
+Instead of drawing wires with the mouse, all the boxes went into a small script that ran in one go:
+
+{: .why }
+**Done with Claude (AI assistant).** Claude read the transistor files, worked out the coordinates, wrote `wire_inverter.tcl`, and tested it on a copy of the layout (DRC, extraction, LVS) before I ran it. I only typed the `source` line below. Everything it did is explained in the rest of this step, so you can do it by hand or write your own script.
+
 
     source /foss/designs/inverter/mag/wire_inverter.tcl
 
@@ -150,11 +154,11 @@ For example, the `out` wire runs at x ≥ 1.30 µm so it stays more than 0.14 µ
 
 ### Why it worked in one go
 
-Before sourcing it on the real design, the script was run on a **copy** of the layout with Magic in batch mode (no window):
+Before I sourced it on the real design, Claude ran the script on a **copy** of the layout with Magic in batch mode (no window):
 
     magic -dnull -noconsole
 
-with DRC (`drc check`, `drc why`), extraction (`extract all`, `ext2spice lvs`, `ext2spice`) and LVS (netgen, Step 5). Result: no DRC errors and `Circuits match uniquely`. Only then was it run on the real files.
+with DRC (`drc check`, `drc why`), extraction (`extract all`, `ext2spice lvs`, `ext2spice`) and LVS (netgen, Step 5). Result: no DRC errors and `Circuits match uniquely`. Only then did I run it on the real files.
 
 {: .fail }
 Drawing wires by hand: a metal1 band across **both** source/drain contact columns **shorts** the transistor (source = drain). DRC does not see this; LVS does.

@@ -1,4 +1,5 @@
 # wire_inverter.tcl : wiring, labels and ports for the sky130 inverter
+# Written and tested with Claude (AI assistant): coordinates computed from the transistor .mag files.
 # Run inside Magic's tkcon:  source /foss/designs/inverter/mag/wire_inverter.tcl
 # Assumes NMOS at (0.82, 1.275) um and PMOS at (0.82, 6.36) um (Step 3.3).
 
