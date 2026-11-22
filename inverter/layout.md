@@ -72,6 +72,93 @@ What it does: saves every changed cell. `save inverter` saves only the top cell;
 
 You should see: `ls` in `mag/` shows `inverter.mag` and a `sky130_fd_pr__nfet_01v8_….mag` file.
 
+## Step 3.3: Place the PMOS and line it up
+
+1. Left-click an empty spot **above** the NMOS (new devices appear at the box).
+2. **Devices 1 → pmos (MOSFET)**: **Width `2`**, **Length `0.15`**, **Fingers `1`** → **Apply**.
+3. `writeall force`.
+
+You should see: a PMOS with tan p-diffusion inside a hatched **n-well** (its body is n-type and goes to VDD).
+
+### Line up the two transistors
+
+Magic has **no align command**. Read the positions, then move by the difference. In tkcon:
+
+    units microns
+    cellname list children
+    select cell sky130_fd_pr__nfet_01v8_XXXXXX_0
+    select bbox
+    select cell sky130_fd_pr__pfet_01v8_YYYYYY_0
+    select bbox
+
+| Command | What it does |
+|---|---|
+| `cellname list children` | lists the instance names in your layout |
+| `select cell NAME_0` | selects one instance. Use the **instance** name (ends in `_0`), not the file name (`.mag`) |
+| `select bbox` | prints the selection's corners: left bottom right top |
+
+Compare the two **left** numbers. Move the PMOS by the difference (here 0.64 µm to the right), then save:
+
+    move e 0.64um
+    select clear
+    writeall force
+
+`move e/w/n/s DIST` moves the selection right/left/up/down.
+
+## Step 3.4: Wire it with a script
+
+Instead of drawing wires with the mouse, I wrote all the boxes into a small script and ran it in one go:
+
+    source /foss/designs/inverter/mag/wire_inverter.tcl
+
+Script: [wire_inverter.tcl]({{ '/assets/files/wire_inverter.tcl' | relative_url }}). `source` runs every line in it, as if typed into tkcon.
+
+You should see: `wire_inverter.tcl done`, then `y` (mouse over the layout) gives **No errors found** and the counter shows **DRC=0**.
+
+![Wired inverter, DRC=0: metal1 for in and out between the transistors, local interconnect from each source to its guard ring]({{ '/assets/img/inverter/3-4-wired-drc0.png' | relative_url }})
+
+### What gets connected
+
+| Net | How |
+|---|---|
+| `in` | metal1 from the NMOS gate contact (top) to the PMOS gate contact (bottom) |
+| `out` | metal1 from both drains (right contact column), joined by a vertical wire on the right |
+| `VDD` | PMOS source (left column) tied to the PMOS guard ring (n-tap = body) with local interconnect (`locali`) |
+| `GND` | NMOS source tied to the NMOS guard ring (p-tap = body) with `locali` |
+| extra | the two unused gate contacts are enlarged with metal1 so they meet the minimum area |
+
+Each wire is two lines: `box x1 y1 x2 y2` sets the box to exact corners (lower-left, upper-right, in µm), `paint LAYER` fills it.
+
+### How the box coordinates were found
+
+No mouse, no guessing: everything comes from the saved files.
+
+1. **Where each transistor sits.** `inverter.mag` has one `use` line per instance, followed by `transform 1 0 X 0 1 Y`: the instance center in **internal units**. Here NMOS = (164, 255), PMOS = (164, 1272).
+2. **Where the metal is inside each transistor.** Each transistor file (`sky130_fd_pr__nfet_01v8_….mag`) lists its shapes under headers like `<< metal1 >>` and `<< locali >>`, one `rect x1 y1 x2 y2` per piece, relative to the transistor's center.
+3. **Add them up.** Absolute position = transistor center + rect. Internal unit = **0.005 µm** (sky130 in Magic: 2 internal units = 1 lambda = 0.01 µm).
+   Example, NMOS top gate contact: metal1 `rect -29 132 29 178` + (164, 255) = 135…193 by 387…433 → **0.675…0.965 µm** by **1.935…2.165 µm**. The `in` wire starts there.
+4. **Keep the sky130 rules** while choosing the wire boxes:
+
+| Rule | sky130 value | Meaning |
+|---|---|---|
+| met1.1 | width ≥ 0.14 µm | thinnest metal1 |
+| met1.2 | spacing ≥ 0.14 µm | gap between two metal1 shapes |
+| met1.6 | area ≥ 0.083 µm² | smallest metal1 piece |
+| li | width ≥ 0.17 µm | thinnest local interconnect |
+
+For example, the `out` wire runs at x ≥ 1.30 µm so it stays more than 0.14 µm away from the `in` wire (ends at 0.965 µm).
+
+### Why it worked in one go
+
+Before sourcing it on the real design, the script was run on a **copy** of the layout with Magic in batch mode (no window):
+
+    magic -dnull -noconsole
+
+with DRC (`drc check`, `drc why`), extraction (`extract all`, `ext2spice lvs`, `ext2spice`) and LVS (netgen, Step 5). Result: no DRC errors and `Circuits match uniquely`. Only then was it run on the real files.
+
+{: .fail }
+Drawing wires by hand: a metal1 band across **both** source/drain contact columns **shorts** the transistor (source = drain). DRC does not see this; LVS does.
+
 ## Next
 
-Step 3.3 (the PMOS) comes after I do it.
+[4. DRC](drc.html) and [5. LVS](lvs.html).

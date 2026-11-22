@@ -18,3 +18,9 @@ Errors I hit and how I fixed them.
 | ngspice cannot find the models | Wrong file name, e.g. `spice.lib.spice` | Use `/foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt` |
 | Double-click opens "Text input" / **Global schematic property** | Double-click landed on the empty background, not the graph | **Cancel**. Select the graph border, press `Q` ([Step 2.8](inverter/simulation.html#step-28-choose-the-signals-and-load-the-waves)) |
 | Binary garbage in a property window after pressing **Load** | **Load** pastes a file as text into that property; it does not load simulation results | Do not save. **File → Reload** (`Alt+S`). Load results with Ctrl+click on the **load waves** launcher |
+| Magic: cursor stuck in wire mode after pressing `p` | `p` starts interactive wire tracking; Esc is not bound in this setup | Save nothing, `quit`, reopen. Avoid `p`; paint boxes instead |
+| Magic: `select cell …` selects nothing, `move` does nothing | Used the file name (`….mag`) | Use the instance name (ends in `_0`); list them with `cellname list children` |
+| Magic: `q` says "No gencell device is selected" | Window shows the transistor's own cell, not `inverter` | `load inverter`, click **flush**, place again |
+| Magic: box corner will not land on an edge | Box snaps to a grid | `snap internal` in tkcon, or type exact `box` coordinates |
+| Magic: files saved in the wrong folder | Magic saves where it was started | `pwd` / `cd` in tkcon |
+| Cannot copy text into the tools desktop | Mac clipboard is not shared automatically | noVNC tab on the left edge → **Clipboard**; or put commands in a `.tcl` file and `source` it |
