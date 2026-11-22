@@ -29,15 +29,15 @@ paint locali
 box -0.055um 6.260um 0.685um 6.460um
 paint locali
 
-# labels + ports (pins for LVS)
+# labels + ports (pins for LVS), made in the symbol's pin order: VDD, in, out, GND
+box 0.04um 6.360um 0.04um 6.360um
+label VDD c locali
+port make
 box 0.820um 3.500um 0.820um 3.500um
 label in c metal1
 port make
 box 1.445um 3.500um 1.445um 3.500um
 label out c metal1
-port make
-box 0.04um 6.360um 0.04um 6.360um
-label VDD c locali
 port make
 box 0.04um 1.275um 0.04um 1.275um
 label GND c locali
