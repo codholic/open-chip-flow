@@ -22,6 +22,11 @@ No Claude, no ChatGPT needed to follow along: just copy each command.
 
 Then: a SAR ADC with the same flow.
 
+## Book notes
+
+[Design of Analog CMOS IC notes](analog-cmos/): Razavi's book, chapter by chapter, with each circuit built and
+simulated in this flow.
+
 ## How each step is written
 
     Step N: what to do
